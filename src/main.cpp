@@ -1,5 +1,7 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "src/commands/run_intake.hpp"
+#include "src/mechanisms/intake.hpp"
 
 // Drivetrain Motors
 pros::MotorGroup
@@ -7,10 +9,15 @@ pros::MotorGroup
 pros::MotorGroup
     left_motors({-1, -2}, pros::MotorGearset::red); // left motors on ports 1, 2
 
+pros::Motor clamp_motor = pros::Motor(5); // motor to pick up mobile flags
+
+// intake
+Mechanisms::Intake intake;
+
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors,             // left motor group
                               &right_motors,            // right motor group
-                              16,                       // 10 inch track width
+                              16,                       // 16 inch track width
                               lemlib::Omniwheel::NEW_4, // using new 4" omnis
                               360,                      // drivetrain rpm is 360
                               2 // horizontal drift is 2 (for now)
@@ -172,7 +179,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  pros::Controller master(pros::E_CONTROLLER_MASTER);
 
   while (true) {
     pros::lcd::print(0, "%d %d %d",
@@ -191,6 +197,8 @@ void opcontrol() {
     // right motor voltage pros::delay(20);                               // Run
     // for 20 ms then update
 
+    bool clampState = false;
+
     // loop forever
     while (true) {
 
@@ -202,6 +210,19 @@ void opcontrol() {
 
       // move the robot
       chassis.arcade(leftY, leftX);
+
+      // run intake
+      commands::run_intake(controller, intake);
+
+      // toggles the state of the clamp (on --> off vice versa)
+      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B) == 1)
+        clampState = !clampState;
+
+      if (clampState)
+        clamp_motor.move_velocity(100);
+      else {
+        clamp_motor.move_relative(-20, 10);
+      }
 
       // delay to save resources
       pros::delay(25);
