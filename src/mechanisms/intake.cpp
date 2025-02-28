@@ -1,8 +1,8 @@
 #include "src/mechanisms/intake.hpp"
 #include "pros/motors.hpp"
+using namespace Mechanisms;
 
-pros::Motor m1 = pros::Motor(7);
+Intake::Intake() : m1(pros::Motor(7)) {}
 
-class Intake {
-  void run_velocity(int velocity) { m1.move_velocity(velocity); };
-};
+void Intake::run(int velocity) { m1.move_velocity(velocity); };
+void Intake::stop() { m1.brake(); }

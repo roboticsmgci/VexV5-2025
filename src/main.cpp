@@ -187,16 +187,6 @@ void opcontrol() {
                      (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >>
                          0); // Prints status of the emulated screen LCDs
 
-    // ? Delete commented out portion below later. Default arcade drive.
-    // Arcade control scheme
-    // int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount
-    // forward/backward from left joystick int turn =
-    // master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from
-    // right joystick left_mg.move(dir - turn);                      // Sets
-    // left motor voltage right_mg.move(dir + turn);                     // Sets
-    // right motor voltage pros::delay(20);                               // Run
-    // for 20 ms then update
-
     bool clampState = false;
 
     // loop forever

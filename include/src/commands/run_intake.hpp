@@ -5,7 +5,7 @@
 #include "src/mechanisms/intake.hpp"
 
 namespace commands {
-void run_intake(pros::Controller controller, Mechanisms::Intake intake);
+void run_intake(pros::Controller &controller, Mechanisms::Intake &intake);
 }
 
 #endif

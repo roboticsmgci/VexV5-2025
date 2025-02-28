@@ -3,11 +3,17 @@
 
 // Your public definitions go here
 #include "pros/motors.hpp"
-extern pros::Motor m1;
+
 namespace Mechanisms {
 class Intake {
+
+private:
+  pros::Motor m1;
+
 public:
-  void run(int velocity) {}
+  void run(int velocity);
+  void stop();
+  Intake();
 };
 } // namespace Mechanisms
 
