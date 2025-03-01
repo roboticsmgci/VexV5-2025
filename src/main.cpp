@@ -1,15 +1,24 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include "liblvgl/llemu.hpp"
+#include "pros/misc.h"
 #include "src/commands/run_intake.hpp"
+#include "src/constants.hpp"
 #include "src/mechanisms/intake.hpp"
+using namespace Constants;
+using namespace std;
 
 // Drivetrain Motors
 pros::MotorGroup
-    right_motors({3, 4}, pros::MotorGearset::red); // right motors on ports 3, 4
+    right_motors({Drivetrain::R1, Drivetrain::R2},
+                 pros::MotorGearset::green); // right motors on ports 3, 4
 pros::MotorGroup
-    left_motors({-1, -2}, pros::MotorGearset::red); // left motors on ports 1, 2
+    left_motors({Drivetrain::L1, -Drivetrain::L2},
+                pros::MotorGearset::green); // left motors on ports 1, 2
 
-pros::Motor clamp_motor = pros::Motor(5); // motor to pick up mobile flags
+pros::Motor clamp_motor =
+    pros::Motor(5, pros::MotorGearset::blue); // motor to pick up mobile
+                                              // flags
 
 // intake
 Mechanisms::Intake intake;
@@ -97,20 +106,42 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // !! UP to Here
 
+// Autonomous
+string auto_path_name = Constants::Auto::a1_name;
+asset auto_path_file = Constants::Auto::a1_file_name;
+
+/**
+ * A callback function for LLEMU's left button.
+ *
+ */
+void on_left_button() {
+  if (auto_path_name != Constants::Auto::a1_name) {
+    pros::lcd::clear_line(2);
+  }
+  pros::lcd::set_text(5, "Auto: " + Constants::Auto::a1_name);
+}
+
 /**
  * A callback function for LLEMU's center button.
  *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
  */
+
 void on_center_button() {
-  static bool pressed = false;
-  pressed = !pressed;
-  if (pressed) {
-    pros::lcd::set_text(2, "I was pressed!");
-  } else {
+  if (auto_path_name != Constants::Auto::a2_name) {
     pros::lcd::clear_line(2);
   }
+  pros::lcd::set_text(5, "Auto: " + Constants::Auto::a2_name);
+}
+
+/**
+ * A callback function for LLEMU's right button.
+ *
+ */
+void on_right_button() {
+  if (auto_path_name != Constants::Auto::a3_name) {
+    pros::lcd::clear_line(2);
+  }
+  pros::lcd::set_text(5, "Auto: " + Constants::Auto::a3_name);
 }
 
 /**
@@ -121,9 +152,14 @@ void on_center_button() {
  */
 void initialize() {
   pros::lcd::initialize();
-  pros::lcd::set_text(1, "Hello PROS User!");
+  pros::lcd::set_text(1, "Hello Gavin! Pick an auto:");
+  pros::lcd::set_text(2, "left - " + Constants::Auto::a1_name);
+  pros::lcd::set_text(3, "center - " + Constants::Auto::a2_name);
+  pros::lcd::set_text(4, "right - " + Constants::Auto::a3_name);
 
+  pros::lcd::register_btn0_cb(on_left_button);
   pros::lcd::register_btn1_cb(on_center_button);
+  pros::lcd::register_btn2_cb(on_right_button);
 }
 
 /**
@@ -159,10 +195,11 @@ ASSET(test_txt);
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+
 void autonomous() {
   // lookahead distance: 15 inches
   // timeout: 2000 ms
-  chassis.follow(test_txt, 15, 2000);
+  chassis.follow(auto_path_file, 15, 2000);
 }
 
 /**
@@ -179,6 +216,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+  bool clampState = false;
 
   while (true) {
     pros::lcd::print(0, "%d %d %d",
@@ -187,35 +225,37 @@ void opcontrol() {
                      (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >>
                          0); // Prints status of the emulated screen LCDs
 
-    bool clampState = false;
+    // ** Single stick arcade drive **
 
-    // loop forever
-    while (true) {
+    // get left y and right x positions
+    int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    int leftX = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
 
-      // ** Single stick arcade drive **
+    // move the robot
+    chassis.arcade(leftY, leftX);
 
-      // get left y and right x positions
-      int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-      int leftX = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+    // run intake
+    commands::run_intake(controller, intake);
 
-      // move the robot
-      chassis.arcade(leftY, leftX);
+    // toggles the state of the clamp (on --> off vice versa)
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
 
-      // run intake
-      commands::run_intake(controller, intake);
-
-      // toggles the state of the clamp (on --> off vice versa)
-      if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B) == 1)
-        clampState = !clampState;
-
-      if (clampState)
-        clamp_motor.move_velocity(100);
-      else {
-        clamp_motor.move_relative(-20, 10);
-      }
-
-      // delay to save resources
-      pros::delay(25);
+      clamp_motor.move_velocity(100);
     }
+    // clampState = !clampState;
+    if (pros::E_CONTROLLER_DIGITAL_B == 1) {
+
+      std::cout << "hi" << "\n";
+      clamp_motor.move_velocity(100);
+    }
+
+    // if (clampState)
+    //   clamp_motor.move_velocity(100);
+    // else {
+    //   clamp_motor.move_relative(-20, 10);
+    // }
+
+    // delay to save resources
+    pros::delay(25);
   }
 }
