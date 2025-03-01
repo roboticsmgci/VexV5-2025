@@ -11,7 +11,7 @@ private:
   pros::Motor m1;
 
 public:
-  void run(int velocity);
+  void run_velocity(int velocity);
   void stop();
   Intake();
 };

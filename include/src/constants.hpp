@@ -5,6 +5,7 @@
 
 namespace Constants {
 enum Drivetrain { L1 = -1, L2 = -2, R1 = 3, R2 = 4 };
+enum Mechanisms { INTAKE = 7 };
 
 class Auto {
 public:

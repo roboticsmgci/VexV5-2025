@@ -5,15 +5,14 @@
 #include "src/commands/run_intake.hpp"
 #include "src/constants.hpp"
 #include "src/mechanisms/intake.hpp"
-using namespace Constants;
 using namespace std;
 
 // Drivetrain Motors
 pros::MotorGroup
-    right_motors({Drivetrain::R1, Drivetrain::R2},
+    right_motors({Constants::Drivetrain::R1, Constants::Drivetrain::R2},
                  pros::MotorGearset::green); // right motors on ports 3, 4
 pros::MotorGroup
-    left_motors({Drivetrain::L1, -Drivetrain::L2},
+    left_motors({Constants::Drivetrain::L1, Constants::Drivetrain::L2},
                 pros::MotorGearset::green); // left motors on ports 1, 2
 
 pros::Motor clamp_motor =
@@ -119,6 +118,8 @@ void on_left_button() {
     pros::lcd::clear_line(2);
   }
   pros::lcd::set_text(5, "Auto: " + Constants::Auto::a1_name);
+  auto_path_file = Constants::Auto::a1_file_name;
+  auto_path_name = Constants::Auto::a1_name;
 }
 
 /**
@@ -131,6 +132,8 @@ void on_center_button() {
     pros::lcd::clear_line(2);
   }
   pros::lcd::set_text(5, "Auto: " + Constants::Auto::a2_name);
+  auto_path_file = Constants::Auto::a2_file_name;
+  auto_path_name = Constants::Auto::a2_name;
 }
 
 /**
@@ -142,6 +145,8 @@ void on_right_button() {
     pros::lcd::clear_line(2);
   }
   pros::lcd::set_text(5, "Auto: " + Constants::Auto::a3_name);
+  auto_path_file = Constants::Auto::a3_file_name;
+  auto_path_name = Constants::Auto::a3_name;
 }
 
 /**
