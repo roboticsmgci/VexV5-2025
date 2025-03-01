@@ -4,6 +4,8 @@
 #include "pros/misc.h"
 #include "src/commands/run_intake.hpp"
 #include "src/constants.hpp"
+#include "src/mechanisms/clamp.hpp"
+#include "src/mechanisms/elevator.hpp"
 #include "src/mechanisms/intake.hpp"
 using namespace std;
 
@@ -21,6 +23,12 @@ pros::Motor clamp_motor =
 
 // intake
 Mechanisms::Intake intake;
+
+// clamp
+Mechanisms::Clamp clamp;
+
+// elevator
+Mechanisms::Elevator elevator;
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors,             // left motor group
@@ -157,7 +165,8 @@ void on_right_button() {
  */
 void initialize() {
   pros::lcd::initialize();
-  pros::lcd::set_text(1, "Hello Gavin! Pick an auto:");
+
+  pros::lcd::set_text(1, "Welcome Master Gavin! Pick an auto:");
   pros::lcd::set_text(2, "left - " + Constants::Auto::a1_name);
   pros::lcd::set_text(3, "center - " + Constants::Auto::a2_name);
   pros::lcd::set_text(4, "right - " + Constants::Auto::a3_name);
@@ -202,6 +211,8 @@ ASSET(test_txt);
  */
 
 void autonomous() {
+  // pros::lcd::clear();
+  // pros::lcd::set_text(1, "Mode: autonomous");
   // lookahead distance: 15 inches
   // timeout: 2000 ms
   chassis.follow(auto_path_file, 15, 2000);
@@ -222,13 +233,10 @@ void autonomous() {
  */
 void opcontrol() {
   bool clampState = false;
+  // pros::lcd::clear();
+  // pros::lcd::set_text(1, "Mode: opcontrol");
 
   while (true) {
-    pros::lcd::print(0, "%d %d %d",
-                     (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-                     (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-                     (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >>
-                         0); // Prints status of the emulated screen LCDs
 
     // ** Single stick arcade drive **
 

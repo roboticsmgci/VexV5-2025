@@ -1,14 +1,14 @@
-#ifndef INTAKE_HPP
-#define INTAKE_HPP
+#ifndef CLAMP_HPP
+#define CLAMP_HPP
 
 // Your public definitions go here
 #include "pros/motors.hpp"
 
 namespace Mechanisms {
-class Intake {
+class Clamp {
 public:
   pros::Motor motor;
-  Intake();
+  Clamp();
 };
 } // namespace Mechanisms
 
