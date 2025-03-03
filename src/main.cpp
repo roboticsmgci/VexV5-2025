@@ -25,10 +25,10 @@ pros::Motor clamp_motor =
 Mechanisms::Intake intake;
 
 // clamp
-Mechanisms::Clamp clamp;
+// Mechanisms::Clamp clamp;
 
 // elevator
-Mechanisms::Elevator elevator;
+// Mechanisms::Elevator elevator;
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors,             // left motor group
@@ -114,20 +114,20 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 // !! UP to Here
 
 // Autonomous
-string auto_path_name = Constants::Auto::a1_name;
-asset auto_path_file = Constants::Auto::a1_file_name;
+// string auto_path_name = Constants::Auto::a1_name;
+// asset auto_path_file = Constants::Auto::a1_file_name;
 
 /**
  * A callback function for LLEMU's left button.
  *
  */
 void on_left_button() {
-  if (auto_path_name != Constants::Auto::a1_name) {
-    pros::lcd::clear_line(2);
-  }
-  pros::lcd::set_text(5, "Auto: " + Constants::Auto::a1_name);
-  auto_path_file = Constants::Auto::a1_file_name;
-  auto_path_name = Constants::Auto::a1_name;
+  // if (auto_path_name != Constants::Auto::a1_name) {
+  //   pros::lcd::clear_line(2);
+  // }
+  // pros::lcd::set_text(5, "Auto: " + Constants::Auto::a1_name);
+  // auto_path_file = Constants::Auto::a1_file_name;
+  // auto_path_name = Constants::Auto::a1_name;
 }
 
 /**
@@ -136,12 +136,12 @@ void on_left_button() {
  */
 
 void on_center_button() {
-  if (auto_path_name != Constants::Auto::a2_name) {
-    pros::lcd::clear_line(2);
-  }
-  pros::lcd::set_text(5, "Auto: " + Constants::Auto::a2_name);
-  auto_path_file = Constants::Auto::a2_file_name;
-  auto_path_name = Constants::Auto::a2_name;
+  // if (auto_path_name != Constants::Auto::a2_name) {
+  //   pros::lcd::clear_line(2);
+  // }
+  // pros::lcd::set_text(5, "Auto: " + Constants::Auto::a2_name);
+  // auto_path_file = Constants::Auto::a2_file_name;
+  // auto_path_name = Constants::Auto::a2_name;
 }
 
 /**
@@ -149,12 +149,12 @@ void on_center_button() {
  *
  */
 void on_right_button() {
-  if (auto_path_name != Constants::Auto::a3_name) {
-    pros::lcd::clear_line(2);
-  }
-  pros::lcd::set_text(5, "Auto: " + Constants::Auto::a3_name);
-  auto_path_file = Constants::Auto::a3_file_name;
-  auto_path_name = Constants::Auto::a3_name;
+  // if (auto_path_name != Constants::Auto::a3_name) {
+  //   pros::lcd::clear_line(2);
+  // }
+  // pros::lcd::set_text(5, "Auto: " + Constants::Auto::a3_name);
+  // auto_path_file = Constants::Auto::a3_file_name;
+  // auto_path_name = Constants::Auto::a3_name;
 }
 
 /**
@@ -167,9 +167,9 @@ void initialize() {
   pros::lcd::initialize();
 
   pros::lcd::set_text(1, "Welcome Master Gavin! Pick an auto:");
-  pros::lcd::set_text(2, "left - " + Constants::Auto::a1_name);
-  pros::lcd::set_text(3, "center - " + Constants::Auto::a2_name);
-  pros::lcd::set_text(4, "right - " + Constants::Auto::a3_name);
+  // pros::lcd::set_text(2, "left - " + Constants::Auto::a1_name);
+  // pros::lcd::set_text(3, "center - " + Constants::Auto::a2_name);
+  // pros::lcd::set_text(4, "right - " + Constants::Auto::a3_name);
 
   pros::lcd::register_btn0_cb(on_left_button);
   pros::lcd::register_btn1_cb(on_center_button);
@@ -215,7 +215,7 @@ void autonomous() {
   // pros::lcd::set_text(1, "Mode: autonomous");
   // lookahead distance: 15 inches
   // timeout: 2000 ms
-  chassis.follow(auto_path_file, 15, 2000);
+  // chassis.follow(auto_path_file, 15, 2000);
 }
 
 /**
@@ -233,7 +233,7 @@ void autonomous() {
  */
 void opcontrol() {
   bool clampState = false;
-  // pros::lcd::clear();
+  pros::lcd::clear();
   // pros::lcd::set_text(1, "Mode: opcontrol");
 
   while (true) {
@@ -251,15 +251,17 @@ void opcontrol() {
     commands::run_intake(controller, intake);
 
     // toggles the state of the clamp (on --> off vice versa)
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+    // if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
 
-      clamp_motor.move_velocity(100);
-    }
+    //   clamp_motor.move_velocity(100);
+    // }
     // clampState = !clampState;
-    if (pros::E_CONTROLLER_DIGITAL_B == 1) {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B) == 1) {
 
       std::cout << "hi" << "\n";
-      clamp_motor.move_velocity(100);
+      clamp_motor.move_velocity(200);
+    } else {
+      clamp_motor.move_velocity(0);
     }
 
     // if (clampState)
