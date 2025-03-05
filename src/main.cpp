@@ -2,6 +2,8 @@
 #include "lemlib/api.hpp" // IWYU pragma: keep
 #include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
+#include "src/commands/run_clamp.hpp"
+#include "src/commands/run_elevator.hpp"
 #include "src/commands/run_intake.hpp"
 #include "src/constants.hpp"
 #include "src/mechanisms/clamp.hpp"
@@ -17,18 +19,14 @@ pros::MotorGroup
     left_motors({Constants::Drivetrain::L1, Constants::Drivetrain::L2},
                 pros::MotorGearset::green); // left motors on ports 1, 2
 
-pros::Motor clamp_motor =
-    pros::Motor(5, pros::MotorGearset::blue); // motor to pick up mobile
-                                              // flags
-
 // intake
 Mechanisms::Intake intake;
 
 // clamp
-// Mechanisms::Clamp clamp;
+Mechanisms::Clamp clamp_mechanism;
 
 // elevator
-// Mechanisms::Elevator elevator;
+Mechanisms::Elevator elevator;
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors,             // left motor group
@@ -250,25 +248,11 @@ void opcontrol() {
     // run intake
     commands::run_intake(controller, intake);
 
-    // toggles the state of the clamp (on --> off vice versa)
-    // if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+    // run elevator
+    commands::run_elevator(controller, elevator);
 
-    //   clamp_motor.move_velocity(100);
-    // }
-    // clampState = !clampState;
-    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B) == 1) {
-
-      std::cout << "hi" << "\n";
-      clamp_motor.move_velocity(200);
-    } else {
-      clamp_motor.move_velocity(0);
-    }
-
-    // if (clampState)
-    //   clamp_motor.move_velocity(100);
-    // else {
-    //   clamp_motor.move_relative(-20, 10);
-    // }
+    // run clamp
+    commands::run_clamp(controller, clamp_mechanism);
 
     // delay to save resources
     pros::delay(25);
