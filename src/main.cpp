@@ -28,6 +28,20 @@ Mechanisms::Clamp clamp_mechanism;
 // elevator
 Mechanisms::Elevator elevator;
 
+// input curve for throttle input during driver control
+lemlib::ExpoDriveCurve
+    throttle_curve(3,    // joystick deadband out of 127
+                   10,   // minimum output where drivetrain will move out of 127
+                   1.019 // expo curve gain
+    );
+
+// input curve for steer input during driver control
+lemlib::ExpoDriveCurve
+    steer_curve(3,    // joystick deadband out of 127
+                10,   // minimum output where drivetrain will move out of 127
+                1.019 // expo curve gain
+    );
+
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors,             // left motor group
                               &right_motors,            // right motor group
@@ -39,9 +53,8 @@ lemlib::Drivetrain drivetrain(&left_motors,             // left motor group
 
 // TODO Configure everything below
 
-// ** Bring back when get IMU**
 // imu
-// pros::Imu imu(10);
+pros::Imu imu(10);
 // horizontal tracking wheel encoder
 // pros::Rotation horizontal_encoder(20);
 // vertical tracking wheel encoder
@@ -71,7 +84,7 @@ lemlib::OdomSensors sensors(
     nullptr, // horizontal tracking wheel 1
     nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a
              // second one
-    nullptr  // inertial sensor
+    &imu     // inertial sensor
 );
 
 // lateral PID controller
@@ -104,8 +117,8 @@ lemlib::ControllerSettings
 lemlib::Chassis chassis(drivetrain,         // drivetrain settings
                         lateral_controller, // lateral PID settings
                         angular_controller, // angular PID settings
-                        sensors             // odometry sensors
-);
+                        sensors,            // odometry sensors
+                        &throttle_curve, &steer_curve);
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
