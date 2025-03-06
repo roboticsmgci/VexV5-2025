@@ -20,27 +20,27 @@ pros::MotorGroup
                 pros::MotorGearset::green); // left motors on ports 1, 2
 
 // intake
-Mechanisms::Intake intake;
+// Mechanisms::Intake intake;
 
 // clamp
-Mechanisms::Clamp clamp_mechanism;
+// Mechanisms::Clamp clamp_mechanism;
 
 // elevator
-Mechanisms::Elevator elevator;
+// Mechanisms::Elevator elevator;
 
 // input curve for throttle input during driver control
-lemlib::ExpoDriveCurve
-    throttle_curve(3,    // joystick deadband out of 127
-                   10,   // minimum output where drivetrain will move out of 127
-                   1.019 // expo curve gain
-    );
+// lemlib::ExpoDriveCurve
+//     throttle_curve(3,    // joystick deadband out of 127
+//                    10,   // minimum output where drivetrain will move out of
+//                    127 1.019 // expo curve gain
+//     );
 
 // input curve for steer input during driver control
-lemlib::ExpoDriveCurve
-    steer_curve(3,    // joystick deadband out of 127
-                10,   // minimum output where drivetrain will move out of 127
-                1.019 // expo curve gain
-    );
+// lemlib::ExpoDriveCurve
+//     steer_curve(3,    // joystick deadband out of 127
+//                 10,   // minimum output where drivetrain will move out of 127
+//                 1.019 // expo curve gain
+//     );
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motors,             // left motor group
@@ -117,8 +117,8 @@ lemlib::ControllerSettings
 lemlib::Chassis chassis(drivetrain,         // drivetrain settings
                         lateral_controller, // lateral PID settings
                         angular_controller, // angular PID settings
-                        sensors,            // odometry sensors
-                        &throttle_curve, &steer_curve);
+                        sensors             // odometry sensors
+);
 
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
@@ -243,7 +243,6 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  bool clampState = false;
   pros::lcd::clear();
   // pros::lcd::set_text(1, "Mode: opcontrol");
 
@@ -259,13 +258,13 @@ void opcontrol() {
     chassis.arcade(leftY, leftX);
 
     // run intake
-    commands::run_intake(controller, intake);
+    // commands::run_intake(controller, intake);
 
     // run elevator
-    commands::run_elevator(controller, elevator);
+    // commands::run_elevator(controller, elevator);
 
     // run clamp
-    commands::run_clamp(controller, clamp_mechanism);
+    // commands::run_clamp(controller, clamp_mechanism);
 
     // delay to save resources
     pros::delay(25);
